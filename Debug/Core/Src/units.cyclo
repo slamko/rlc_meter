@@ -1,0 +1,11 @@
+units.h:22:14:Res::Res(long long unsigned int) [inherited from Unit<long long unsigned int>]	1
+units.cpp:13:5:Res operator""_kOhm(long long unsigned int)	1
+units.h:26:14:Capa::Capa(long double) [inherited from Unit<long double>]	1
+units.cpp:17:6:Capa operator""_uF(long double)	1
+units.cpp:21:6:Capa operator""_nF(long double)	1
+units.cpp:25:6:Capa operator""_pF(long double)	1
+units.h:30:14:Self::Self(long double) [inherited from Unit<long double>]	1
+units.cpp:29:6:Self operator""_mH(long double)	1
+units.cpp:33:6:Self operator""_uH(long double)	1
+units.cpp:11:1:Unit<Data>::Unit(Data) [with Data = long long unsigned int]	1
+units.cpp:11:1:Unit<Data>::Unit(Data) [with Data = long double]	1

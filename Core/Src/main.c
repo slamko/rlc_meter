@@ -22,6 +22,9 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
+#include "capameter.h"
+#include "selfmeter.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -97,10 +100,9 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  /*HAL_ADC_Start(&hadc2);
-	  if (HAL_ADC_PollForConversion(&hadc2, 1000) != HAL_OK) continue;
-	  uint32_t init_val = HAL_ADC_GetValue(&hadc2);*/
-	  loop();
+	  capameter();
+	  selfmeter();
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

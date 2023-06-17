@@ -1,15 +1,16 @@
 #include "main.h"
 #include <math.h>
 #include <stdio.h>
+#include "units.h"
 #include <chrono>
 
 using namespace std::chrono;
 
 bool adc_ready = false;
 
-double capa_calc(std::chrono::milliseconds charge_time, uint32_t res, uint32_t vc0, uint32_t vc) {
+Capa capa_calc(std::chrono::milliseconds charge_time, Res res, uint32_t vc0, uint32_t vc) {
 	double ln = log((double)(4096 - vc0) / (double)(4096 - vc - vc0));
-	return ((charge_time.count() * 1000 )/ (ln * res));
+	return Capa(((charge_time.count() * 1000 )/ (ln * res)) * 1000 * 1000);
 }
 
 extern "C" void HAL_GPIO_EXTI_Callback(uint16_t pin) {
@@ -21,7 +22,7 @@ extern "C" void HAL_GPIO_EXTI_Callback(uint16_t pin) {
 	}
 }
 
-extern "C" void loop(void) {
+extern "C" void capameter(void) {
 	  if (adc_ready) {
 		  uint32_t init_val, val;
 
@@ -37,7 +38,7 @@ extern "C" void loop(void) {
 
 		  val = HAL_ADC_GetValue(&hadc2);
 		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
-		  double cap = capa_calc(10ms, 10000, init_val, val);
-		  printf("Capacitance: %d", (unsigned int)(cap * 1000));
+		  Capa capa = capa_calc(10ms, 10_kOhm, init_val, val);
+		  printf("Capacitance: %d", (unsigned int)(capa));
 	  }
 }
