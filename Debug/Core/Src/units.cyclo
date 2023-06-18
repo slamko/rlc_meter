@@ -1,17 +1,20 @@
-units.h:24:14:Res::Res(long long unsigned int) [inherited from Unit<long long unsigned int>]	1
+units.h:26:14:Res::Res(long long unsigned int) [inherited from Unit<long long unsigned int>]	1
 units.cpp:13:5:static Res Res::kohm(long long unsigned int)	1
-units.h:30:14:Capa::Capa(long double) [inherited from Unit<long double>]	1
-units.cpp:17:6:static Capa Capa::uf(long double)	1
-units.cpp:21:6:static Capa Capa::nf(long double)	1
-units.cpp:25:6:static Capa Capa::pf(long double)	1
-units.cpp:29:5:Res operator""_kOhm(long long unsigned int)	1
-units.cpp:33:6:Capa operator""_uF(long double)	1
-units.cpp:37:6:Capa operator""_nF(long double)	1
-units.cpp:41:6:Capa operator""_pF(long double)	1
-units.h:38:14:Self::Self(long double) [inherited from Unit<long double>]	1
-units.cpp:45:6:static Self Self::mh(long double)	1
-units.cpp:49:6:static Self Self::uh(long double)	1
-units.cpp:53:6:Self operator""_mH(long double)	1
-units.cpp:57:6:Self operator""_uH(long double)	1
+units.h:32:14:Capa::Capa(long double) [inherited from Unit<long double>]	1
+units.cpp:17:6:static Capa Capa::f(long double)	1
+units.cpp:21:6:static Capa Capa::uf(long double)	1
+units.cpp:25:6:static Capa Capa::nf(long double)	1
+units.cpp:29:6:static Capa Capa::pf(long double)	1
+units.cpp:33:5:Res operator""_Ohm(long long unsigned int)	1
+units.cpp:37:5:Res operator""_kOhm(long long unsigned int)	1
+units.cpp:41:6:Capa operator""_uF(long double)	1
+units.cpp:45:6:Capa operator""_nF(long double)	1
+units.cpp:49:6:Capa operator""_pF(long double)	1
+units.h:41:14:Self::Self(long double) [inherited from Unit<long double>]	1
+units.cpp:53:6:static Self Self::h(long double)	1
+units.cpp:57:6:static Self Self::mh(long double)	1
+units.cpp:61:6:static Self Self::uh(long double)	1
+units.cpp:65:6:Self operator""_mH(long double)	1
+units.cpp:69:6:Self operator""_uH(long double)	1
 units.cpp:11:1:Unit<Data>::Unit(Data) [with Data = long long unsigned int]	1
 units.cpp:11:1:Unit<Data>::Unit(Data) [with Data = long double]	1

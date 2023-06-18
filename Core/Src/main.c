@@ -99,7 +99,7 @@ int main(void)
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
 
-  lcd_init();
+  HAL_TIM_Base_Start(&htim2);
   HAL_ADCEx_Calibration_Start(&hadc2, ADC_SINGLE_ENDED);
   /* USER CODE END 2 */
 
@@ -107,7 +107,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  capameter();
+	  //capameter();
 	  selfmeter();
 
     /* USER CODE END WHILE */

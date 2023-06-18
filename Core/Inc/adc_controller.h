@@ -8,6 +8,8 @@
 #ifndef INC_ADC_CONTROLLER_H_
 #define INC_ADC_CONTROLLER_H_
 
+#include <chrono>
+
 extern bool adc_ready;
 
 int measure(ADC_HandleTypeDef *adc, uint16_t supply_pin,

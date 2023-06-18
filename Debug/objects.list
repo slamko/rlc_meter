@@ -1,3 +1,4 @@
+"./Core/Src/adc_controller.o"
 "./Core/Src/capameter.o"
 "./Core/Src/lcd.o"
 "./Core/Src/main.o"
