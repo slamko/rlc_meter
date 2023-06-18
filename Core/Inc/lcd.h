@@ -22,5 +22,7 @@
 void lcd_init(void);
 
 void lcd_msg(const char *msg, size_t len);
+void lcd_clear(void);
+void lcd_ret_home(void);
 
 #endif /* INC_LCD_H_ */

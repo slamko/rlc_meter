@@ -14,6 +14,10 @@ Res Res::kohm(unsigned long long val) {
 	return Res(val * 1000);
 }
 
+Capa Capa::f(long double val) {
+	return Capa(val * 1000 * 1000 * 1000 * 1000);
+}
+
 Capa Capa::uf(long double val) {
 	return Capa(val * 1000 * 1000);
 }
@@ -24,6 +28,10 @@ Capa Capa::nf(long double val) {
 
 Capa Capa::pf(long double val) {
 	return Capa(val);
+}
+
+Res operator ""_Ohm(unsigned long long val) {
+	return Res::kohm(val);
 }
 
 Res operator ""_kOhm(unsigned long long val) {
@@ -40,6 +48,10 @@ Capa operator ""_nF(long double val) {
 
 Capa operator ""_pF(long double val) {
 	return Capa::pf(val);
+}
+
+Self Self::h(long double val) {
+	return Self(val * 1000 * 1000);
 }
 
 Self Self::mh(long double val) {

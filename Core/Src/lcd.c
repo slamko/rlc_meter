@@ -11,9 +11,9 @@
 
 static void db_nibble_write(uint8_t val) {
 	d4_set(val & (1 << 0));
-	d5_set(val & (1 << 1));
-	d6_set(val & (1 << 2));
-	d7_set(val & (1 << 3));
+	d5_set((val & (1 << 1)) >> 1);
+	d6_set((val & (1 << 2)) >> 2);
+	d7_set((val & (1 << 3)) >> 3);
 
 	en_set(GPIO_PIN_SET);
 	HAL_Delay(1);
@@ -52,11 +52,18 @@ void lcd_msg(const char *msg, size_t len) {
 	}
 }
 
+void lcd_ret_home(void) {
+	cmd_write(0x20);
+	HAL_Delay(1);
+}
+
 void lcd_clear(void) {
-	cmd_write(0x00);
+	cmd_write(0x10);
+	HAL_Delay(1);
 }
 
 void lcd_init(void) {
+
 	HAL_Delay(100);
 	cmd_write(0x03);
 
@@ -76,14 +83,19 @@ void lcd_init(void) {
 	HAL_Delay(3);
 	cmd_write(0x10);
 	HAL_Delay(3);
-	cmd_write(0x40);
+	cmd_write(0x60);
 	HAL_Delay(3);
 
 	//cur_shift_right();
 	HAL_Delay(10);
-	//lcd_msg("hhello");
-	//lcd_clear();
+	//lcd_ret_home();
 
+	//lcd_clear();
+	//lcd_msg("hhello", 6);
+
+	/*db_nibble_write(0x2);
+	HAL_Delay(10000);
+	db_nibble_write(0x3);*/
 }
 
 

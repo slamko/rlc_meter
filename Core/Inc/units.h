@@ -8,6 +8,8 @@
 #ifndef INC_UNITS_H_
 #define INC_UNITS_H_
 
+#define E 4096
+
 template <class Data>
 struct Unit {
 	Data val;
@@ -29,6 +31,7 @@ struct Res : public Unit<unsigned long long> {
 struct Capa : public Unit<long double>{
 	using Unit::Unit;
 
+	static Capa f(long double);
 	static Capa uf(long double);
 	static Capa nf(long double);
 	static Capa pf(long double);
@@ -37,11 +40,13 @@ struct Capa : public Unit<long double>{
 struct Self : public Unit<long double>{
 	using Unit::Unit;
 
+	static Self h(long double);
 	static Self mh(long double);
 	static Self uh(long double);
 	static Self nh(long double);
 };
 
+Res operator ""_Ohm(unsigned long long val);
 Res operator""_kOhm(unsigned long long int val);
 
 Capa operator ""_uF(long double val);

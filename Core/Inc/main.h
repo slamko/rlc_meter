@@ -62,6 +62,8 @@ extern TIM_HandleTypeDef htim2;
 
 /* USER CODE BEGIN Private defines */
 
+#define START_BUTTON_PIN GPIO_PIN_10
+
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus
