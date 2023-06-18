@@ -14,7 +14,7 @@ using namespace std::chrono;
 
 Capa capa_calc(std::chrono::milliseconds charge_time, Res res, uint32_t vc0, uint32_t vc) {
 	double ln = log((double)(E - vc0) / (double)(E - vc));
-	return Capa::f(((charge_time.count() * 1000)/ (ln * res)));
+	return Capa::f(((charge_time.count() * 1000)/ (ln * res.get_ohm())));
 }
 
 extern "C" void capameter(void) {
@@ -36,7 +36,7 @@ extern "C" void capameter(void) {
 
 		  lcd_clear();
 		  lcd_ret_home();
-		  print_num(capa.val / 1000000);
+		  print_num(capa.get_uf());
 		  adc_ready = false;
 	  }
 }

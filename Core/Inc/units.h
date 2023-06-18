@@ -12,24 +12,40 @@
 
 template <class Data>
 struct Unit {
-	Data val;
-
-	operator Data() {
-		return val;
-	}
 
 protected:
+	Data val;
 	explicit Unit(Data val);
 };
 
 struct Res : public Unit<unsigned long long> {
 	using Unit::Unit;
 
+	unsigned long long get_kohm() {
+		return this->val / 1000;
+	}
+
+	unsigned long long get_ohm() {
+		return this->val;
+	}
+
 	static Res kohm(unsigned long long);
 };
 
 struct Capa : public Unit<long double>{
 	using Unit::Unit;
+
+	long double get_uf() {
+		return val / (1000 * 1000);
+	}
+
+	long double get_nf() {
+		return val / (1000);
+	}
+
+	long double get_pf() {
+		return val;
+	}
 
 	static Capa f(long double);
 	static Capa uf(long double);
@@ -39,6 +55,18 @@ struct Capa : public Unit<long double>{
 
 struct Self : public Unit<long double>{
 	using Unit::Unit;
+
+	long double get_mh() {
+		return val / 1000;
+	}
+
+	long double get_uh() {
+		return val;
+	}
+
+	long double get_nh() {
+		return val * 1000;
+	}
 
 	static Self h(long double);
 	static Self mh(long double);
