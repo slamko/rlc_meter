@@ -1,7 +1,0 @@
-chrono:486:2:constexpr std::chrono::duration<_Rep, _Period>::rep std::chrono::duration<_Rep, _Period>::count() const [with _Rep = long long int; _Period = std::ratio<1, 1000>]	1
-capameter.cpp:15:6:Capa capa_calc(std::chrono::milliseconds, Res, uint32_t, uint32_t)	1
-capameter.cpp:20:17:void capameter()	4
-units.h:17:2:Unit<Data>::operator Data() [with Data = long long unsigned int]	1
-chrono:1219:7:_Digits = {'1', '0'}]	1
-chrono:1168:22:_Digits = {'1', '0'}]	1
-chrono:470:23:constexpr std::chrono::duration<_Rep, _Period>::duration(const _Rep2&) [with _Rep2 = long long int; <template-parameter-2-2> = void; _Rep = long long int; _Period = std::ratio<1, 1000>]	1

@@ -1,3 +1,0 @@
-../Core/Src/outils.c:12:6:wait_us	16	static
-../Core/Src/outils.c:18:7:_print_num_rec	40	static
-../Core/Src/outils.c:34:6:print_num	40	static
