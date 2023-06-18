@@ -54,6 +54,7 @@ void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
 extern ADC_HandleTypeDef hadc2;
+extern TIM_HandleTypeDef htim2;
 
 /* USER CODE END EFP */
 
