@@ -3,6 +3,9 @@
 #include <stdio.h>
 #include "units.h"
 #include <chrono>
+extern "C" {
+	#include "lcd.h"
+}
 
 using namespace std::chrono;
 
@@ -15,18 +18,40 @@ Capa capa_calc(std::chrono::milliseconds charge_time, Res res, uint32_t vc0, uin
 
 extern "C" void HAL_GPIO_EXTI_Callback(uint16_t pin) {
 	if (pin == GPIO_PIN_10) {
-		GPIO_PinState pin_val = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_10);
-		if (pin_val == GPIO_PIN_RESET) {
-			adc_ready = true;
-		}
+		//GPIO_PinState pin_val = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_10);
+		//if (pin_val == GPIO_PIN_RESET) {
+		adc_ready = true;
+		//}
 	}
+}
+
+char *_print_num_rec(unsigned int num, uint32_t *mul, char *str, size_t siz) {
+    if (num >= 10) {
+        uint32_t div = (uint32_t)(num / 10);
+        char c = num - (div * 10) + 48;
+        str[siz - *mul - 1] = c;
+        *mul += 1;
+        return _print_num_rec(div, mul, str, siz);
+    } else {
+        char c = num + 48;
+        str[siz - *mul - 1] = c;
+        return str + siz - *mul - 1;
+    }
+
+    return str;
+}
+
+extern "C" void fb_print_num(unsigned int num) {
+    char str[16];
+    uint32_t mul = 1;
+    char *str_num = _print_num_rec(num, &mul, str, sizeof(str));
+    lcd_msg(str_num, mul);
 }
 
 extern "C" void capameter(void) {
 	  if (adc_ready) {
 		  uint32_t init_val, val;
 
-		  adc_ready = false;
 		  HAL_ADC_Start(&hadc2);
 		  if (HAL_ADC_PollForConversion(&hadc2, 1000) != HAL_OK) return;
 		  init_val = HAL_ADC_GetValue(&hadc2);
@@ -39,6 +64,9 @@ extern "C" void capameter(void) {
 		  val = HAL_ADC_GetValue(&hadc2);
 		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
 		  Capa capa = capa_calc(10ms, 10_kOhm, init_val, val);
-		  printf("Capacitance: %d", (unsigned int)(capa));
+		  //printf("Capacitance: %d", (unsigned int)(capa));
+		 //lcd_msg("Hello", 5);
+		  fb_print_num(capa.val / 1000000);
+		  adc_ready = false;
 	  }
 }

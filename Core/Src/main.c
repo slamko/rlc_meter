@@ -24,6 +24,7 @@
 
 #include "capameter.h"
 #include "selfmeter.h"
+#include "lcd.h"
 
 /* USER CODE END Includes */
 
@@ -63,6 +64,7 @@ static void MX_TIM2_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
+
 /* USER CODE END 0 */
 
 /**
@@ -97,7 +99,8 @@ int main(void)
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
 
- // HAL_ADCEx_Calibration_Start(&hadc1, 1);
+  lcd_init();
+  HAL_ADCEx_Calibration_Start(&hadc2, ADC_SINGLE_ENDED);
   /* USER CODE END 2 */
 
   /* Infinite loop */
