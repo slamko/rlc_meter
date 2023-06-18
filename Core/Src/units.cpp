@@ -10,26 +10,50 @@
 template <class Data>
 Unit<Data>::Unit(Data val) : val(val) {}
 
-Res operator ""_kOhm(unsigned long long val) {
+Res Res::kohm(unsigned long long val) {
 	return Res(val * 1000);
 }
 
-Capa operator ""_uF(long double val) {
-	return Capa(val * 1000000);
+Capa Capa::uf(long double val) {
+	return Capa(val * 1000 * 1000);
 }
 
-Capa operator ""_nF(long double val) {
+Capa Capa::nf(long double val) {
 	return Capa(val * 1000);
 }
 
-Capa operator ""_pF(long double val) {
+Capa Capa::pf(long double val) {
 	return Capa(val);
 }
 
-Self operator ""_mH(long double val) {
+Res operator ""_kOhm(unsigned long long val) {
+	return Res::kohm(val * 1000);
+}
+
+Capa operator ""_uF(long double val) {
+	return Capa::uf(val);
+}
+
+Capa operator ""_nF(long double val) {
+	return Capa::nf(val);
+}
+
+Capa operator ""_pF(long double val) {
+	return Capa::pf(val);
+}
+
+Self Self::mh(long double val) {
 	return Self(val * 1000);
 }
 
-Self operator ""_uH(long double val) {
+Self Self::uh(long double val) {
 	return Self(val);
+}
+
+Self operator ""_mH(long double val) {
+	return Self::mh(val);
+}
+
+Self operator ""_uH(long double val) {
+	return Self::uh(val);
 }

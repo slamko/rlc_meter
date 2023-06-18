@@ -11,23 +11,35 @@
 template <class Data>
 struct Unit {
 	Data val;
-	explicit Unit(Data val);
 
 	operator Data() {
 		return val;
 	}
+
+protected:
+	explicit Unit(Data val);
 };
 
 struct Res : public Unit<unsigned long long> {
 	using Unit::Unit;
+
+	static Res kohm(unsigned long long);
 };
 
 struct Capa : public Unit<long double>{
 	using Unit::Unit;
+
+	static Capa uf(long double);
+	static Capa nf(long double);
+	static Capa pf(long double);
 };
 
 struct Self : public Unit<long double>{
 	using Unit::Unit;
+
+	static Self mh(long double);
+	static Self uh(long double);
+	static Self nh(long double);
 };
 
 Res operator""_kOhm(unsigned long long int val);
