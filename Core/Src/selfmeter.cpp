@@ -19,27 +19,44 @@ extern "C" {
 
 using namespace std::chrono;
 
+constexpr microseconds DEFAULT_SAMPLE_TIME = 10000us;
+constexpr unsigned int SAMPLE_COUNT = 5;
+const Res INPUT_RESISTANCE = 10_Ohm;
+
 Self self_calc(microseconds charge_time, Res res, uint16_t vc0, uint16_t vc) {
 	double ln = log((double)vc0 / (double)vc);
-	return Self::h(((charge_time.count() * res.get_ohm()) / (ln * 1000 * 1000)));
+	Self val = Self::h(((charge_time.count() * res.get_ohm()) / (ln * 1000 * 1000)));
+	return val;
 }
 
 extern "C" void selfmeter(void) {
 	  if (adc_ready) {
 		  uint16_t init_val, val;
+		  microseconds sample_time = DEFAULT_SAMPLE_TIME;
+		  Self self{};
 
-		  measure(&hadc2, GPIO_PIN_4, 10000us, &init_val, &val);
-
-		  Self self = self_calc(10000us, 10_Ohm, init_val, val);
-
-		  if (self.get_uh() < 0) {
-			  // un condo
+		  measure(&hadc2, GPIO_PIN_4, sample_time, &init_val, &val);
+/*
+		  for (; val < 256; measure(&hadc2, GPIO_PIN_4, sample_time, &init_val, &val)) {
+			  sample_time /= 10;
 		  }
+
+		  for (; val > HIGH_ADC_VAL; measure(&hadc2, GPIO_PIN_4, sample_time, &init_val, &val)) {
+			  sample_time *= 10;
+		  }
+*/
+		  for (unsigned int i = 0; i < SAMPLE_COUNT; i++) {
+			  measure(&hadc2, GPIO_PIN_4, sample_time, &init_val, &val);
+			  self.set_val(self +
+					  self_calc(sample_time, INPUT_RESISTANCE, init_val, val));
+		  }
+
+		  self.set_val(self / SAMPLE_COUNT);
 
 		  lcd_clear();
 		  lcd_print("Self=");
-		  print_unit(self.get_uh());
-		  lcd_print("uH");
+		  print_unit(self.get_auto());
+		  lcd_print(self.get_auto_unit());
 		  adc_ready = false;
 	  }
 }

@@ -14,6 +14,13 @@ template <class Data>
 struct Unit {
 	Unit() : val{} {}
 
+	virtual Data get_auto() = 0;
+	virtual const char *get_auto_unit() = 0;
+
+	void set_val(const Unit<Data>& unit) {
+		this->val = unit.val;
+	}
+
 protected:
 	Data val;
 	explicit Unit(Data val);
@@ -21,6 +28,9 @@ protected:
 
 struct Res : public Unit<unsigned long long> {
 	using Unit::Unit;
+
+	unsigned long long get_auto();
+	const char *get_auto_unit();
 
 	unsigned long long get_kohm() {
 		return this->val / 1000;
@@ -31,23 +41,11 @@ struct Res : public Unit<unsigned long long> {
 	}
 
 	static Res kohm(unsigned long long);
+	static Res ohm(unsigned long long);
 };
 
 struct Capa : public Unit<long double>{
 	using Unit::Unit;
-
-	Capa operator +(Capa unit) {
-		return Capa(this->val + unit.val);
-	}
-
-	Capa operator /(int unit) {
-		return Capa(this->val / unit);
-	}
-
-	Capa& operator =(const Capa& unit) {
-		this->val = unit.val;
-		return *this;
-	}
 
 	long double get_uf() {
 		return val / (1000 * 1000);
@@ -61,6 +59,14 @@ struct Capa : public Unit<long double>{
 		return val;
 	}
 
+	Capa operator +(Capa capa) {
+		return Capa(this->val + capa.val);
+	}
+
+	Capa operator /(unsigned int val) {
+		return Capa(this->val / val);
+	}
+
 	long double get_auto();
 	const char *get_auto_unit();
 
@@ -72,6 +78,21 @@ struct Capa : public Unit<long double>{
 
 struct Self : public Unit<long double>{
 	using Unit::Unit;
+
+	long double get_auto();
+	const char *get_auto_unit();
+
+	Self operator +(Self capa) {
+		return Self(this->val + capa.val);
+	}
+
+	Self operator /(unsigned int val) {
+		return Self(this->val / val);
+	}
+
+	long double get_h() {
+		return val / (1000 * 1000);
+	}
 
 	long double get_mh() {
 		return val / 1000;

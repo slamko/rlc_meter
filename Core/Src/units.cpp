@@ -14,6 +14,10 @@ Res Res::kohm(unsigned long long val) {
 	return Res(val * 1000);
 }
 
+Res Res::ohm(unsigned long long val) {
+	return Res(val);
+}
+
 Capa Capa::f(long double val) {
 	return Capa(val * 1000 * 1000 * 1000 * 1000);
 }
@@ -31,11 +35,56 @@ Capa Capa::pf(long double val) {
 }
 
 Res operator ""_Ohm(unsigned long long val) {
-	return Res::kohm(val);
+	return Res::ohm(val);
 }
 
 Res operator ""_kOhm(unsigned long long val) {
-	return Res::kohm(val * 1000);
+	return Res::kohm(val);
+}
+
+unsigned long long Res::get_auto() {
+	if (val > 1000.0) {
+		return get_kohm();
+	} else if (val > 1.0) {
+		return get_ohm();
+	}
+	return val;
+}
+
+const char *Res::get_auto_unit() {
+	if (val > 1000000.0) {
+		return "MOhm";
+	} else if (val > 1000.0) {
+		return "KOhm";
+	} else if (val > 1.0) {
+		return "Ohm";
+	}
+	return "nil";
+}
+
+
+long double Self::get_auto() {
+	if (val > 1000000000.0) {
+		return 0;
+	} else if (val > 1000000.0) {
+		return get_h();
+	} else if (val > 1000.0) {
+		return get_mh();
+	} else if (val > 1.0) {
+		return get_uh();
+	}
+	return val;
+}
+
+const char *Self::get_auto_unit() {
+	if (val > 1000000.0) {
+		return "H";
+	} else if (val > 1000.0) {
+		return "mH";
+	} else if (val > 1.0) {
+		return "uH";
+	}
+	return "nil";
 }
 
 long double Capa::get_auto() {
@@ -57,7 +106,7 @@ const char *Capa::get_auto_unit() {
 	} else if (val > 1.0) {
 		return "pF";
 	}
-	return "fF";
+	return "nil";
 }
 
 Capa operator ""_uF(long double val) {
