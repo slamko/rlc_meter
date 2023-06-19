@@ -38,7 +38,7 @@ extern "C" void selfmeter(void) {
 
 		  lcd_clear();
 		  lcd_print("Self=");
-		  print_num(self.get_uh());
+		  print_unit(self.get_uh());
 		  lcd_print("uH");
 		  adc_ready = false;
 	  }

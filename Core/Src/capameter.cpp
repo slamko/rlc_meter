@@ -36,7 +36,7 @@ extern "C" void capameter(void) {
 
 		  lcd_clear();
 		  lcd_print("Capa=");
-		  print_num(capa.get_uf());
+		  print_unit(capa.get_uf());
 		  lcd_print("uF");
 		  adc_ready = false;
 	  }

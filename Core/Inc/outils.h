@@ -11,6 +11,8 @@
 
 void wait_us(unsigned long delay);
 
-void print_num(unsigned int num);
+void print_num(unsigned int num, int comma);
+
+void print_unit(long double num);
 
 #endif /* INC_OUTILS_H_ */
