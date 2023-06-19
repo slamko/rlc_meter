@@ -21,7 +21,7 @@ using namespace std::chrono;
 
 Self self_calc(microseconds charge_time, Res res, uint16_t vc0, uint16_t vc) {
 	double ln = log((double)vc0 / (double)vc);
-	return Self::h(((charge_time.count() * 1000 * 1000 * res.get_ohm()) / ln));
+	return Self::h(((charge_time.count() * res.get_ohm()) / (ln * 1000 * 1000)));
 }
 
 extern "C" void selfmeter(void) {
@@ -36,9 +36,10 @@ extern "C" void selfmeter(void) {
 			  // un condo
 		  }
 
-		 // lcd_clear();
-		 // lcd_ret_home();
-		 // print_num(self.val / 1000000);
+		  lcd_clear();
+		  lcd_print("Self=");
+		  print_num(self.get_uh());
+		  lcd_print("uH");
 		  adc_ready = false;
 	  }
 }

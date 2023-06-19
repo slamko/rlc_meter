@@ -101,14 +101,15 @@ int main(void)
 
   HAL_TIM_Base_Start(&htim2);
   HAL_ADCEx_Calibration_Start(&hadc2, ADC_SINGLE_ENDED);
+  lcd_init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  //capameter();
-	  selfmeter();
+	  capameter();
+	  //selfmeter();
 
     /* USER CODE END WHILE */
 

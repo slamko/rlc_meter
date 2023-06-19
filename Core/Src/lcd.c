@@ -10,7 +10,7 @@
 #include "lcd.h"
 
 static void db_nibble_write(uint8_t val) {
-	d4_set(val & (1 << 0));
+	d4_set((val & (1 << 0)) >> 0);
 	d5_set((val & (1 << 1)) >> 1);
 	d6_set((val & (1 << 2)) >> 2);
 	d7_set((val & (1 << 3)) >> 3);
@@ -30,8 +30,8 @@ static void cmd_nibble_write(uint8_t data) {
 static void cmd_write(uint8_t data) {
 	rs_set(0);
 	rw_set(0);
-	db_nibble_write(data & 0x0F);
 	db_nibble_write((data & 0xF0) >> 4);
+	db_nibble_write(data & 0x0F);
 }
 
 static void cur_shift_right(void) {
@@ -41,8 +41,8 @@ static void cur_shift_right(void) {
 static void data_write(char data) {
 	rs_set(1);
 	rw_set(0);
-	db_nibble_write(data & 0x0F);
 	db_nibble_write((data & 0xF0) >> 4);
+	db_nibble_write(data & 0x0F);
 }
 
 void lcd_msg(const char *msg, size_t len) {
@@ -52,50 +52,57 @@ void lcd_msg(const char *msg, size_t len) {
 	}
 }
 
+void lcd_print(const char *msg) {
+	for (unsigned int i  = 0; msg[i]; i++) {
+		data_write(msg[i]);
+		HAL_Delay(3);
+	}
+}
+
 void lcd_ret_home(void) {
-	cmd_write(0x20);
+	cmd_write(0x02);
 	HAL_Delay(1);
 }
 
 void lcd_clear(void) {
-	cmd_write(0x10);
+	cmd_write(0x01);
 	HAL_Delay(1);
 }
 
-void lcd_init(void) {
+void lcd_shift_left(void) {
+	cmd_write(0x18);
+	wait_us(60);
+}
 
-	HAL_Delay(100);
-	cmd_write(0x03);
+void lcd_shift_right(void) {
+	cmd_write(0x1C);
+	wait_us(60);
+}
+
+void lcd_init(void) {
+	cmd_nibble_write(0x0);
+
+	HAL_Delay(150);
+	cmd_nibble_write(0x3);
 
 	HAL_Delay(5);
-	cmd_write(0x03);
+	cmd_nibble_write(0x3);
 
 	HAL_Delay(1);
-	cmd_write(0x03);
+	cmd_nibble_write(0x3);
+
+	HAL_Delay(1);
+	cmd_nibble_write(0x2);
 
 	HAL_Delay(10);
-	cmd_write(0x02);
-
-	HAL_Delay(10);
-	cmd_write(0x82);
+	cmd_write(0x28);
 	HAL_Delay(3);
-	cmd_write(0x80);
+	cmd_write(0x0C);
 	HAL_Delay(3);
-	cmd_write(0x10);
+	cmd_write(0x06);
 	HAL_Delay(3);
-	cmd_write(0x60);
+	cmd_write(0x01);
 	HAL_Delay(3);
-
-	//cur_shift_right();
-	HAL_Delay(10);
-	//lcd_ret_home();
-
-	//lcd_clear();
-	//lcd_msg("hhello", 6);
-
-	/*db_nibble_write(0x2);
-	HAL_Delay(10000);
-	db_nibble_write(0x3);*/
 }
 
 
