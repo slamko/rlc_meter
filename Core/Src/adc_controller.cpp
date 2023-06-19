@@ -38,6 +38,8 @@ int measure(ADC_HandleTypeDef *adc, uint16_t supply_pin,
 	  *v = HAL_ADC_GetValue(adc);
 	  HAL_GPIO_WritePin(GPIOB, supply_pin, GPIO_PIN_RESET);
 
+	  wait_us(sample_delay.count() * 10);
+
 	  return 0;
 }
 
