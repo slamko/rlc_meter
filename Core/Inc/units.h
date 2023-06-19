@@ -12,6 +12,7 @@
 
 template <class Data>
 struct Unit {
+	Unit() : val{} {}
 
 protected:
 	Data val;
@@ -34,6 +35,20 @@ struct Res : public Unit<unsigned long long> {
 
 struct Capa : public Unit<long double>{
 	using Unit::Unit;
+
+	Capa operator +(Capa unit) {
+		return Capa(this->val + unit.val);
+	}
+
+	Capa operator /(int unit) {
+		return Capa(this->val / unit);
+	}
+
+	Capa& operator =(const Capa& unit) {
+		this->val = unit.val;
+		return *this;
+	}
+
 
 	long double get_uf() {
 		return val / (1000 * 1000);
