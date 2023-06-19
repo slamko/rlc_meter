@@ -25,10 +25,10 @@ int measure(ADC_HandleTypeDef *adc, uint16_t supply_pin,
 		std::chrono::microseconds sample_delay,
 		uint16_t *v0, uint16_t *v) {
 
-	  HAL_GPIO_WritePin(GPIOB, supply_pin, GPIO_PIN_SET);
 	  HAL_ADC_Start(adc);
 	  if (HAL_ADC_PollForConversion(adc, 1000) != HAL_OK) return 1;
 	  *v0 = HAL_ADC_GetValue(adc);
+	  HAL_GPIO_WritePin(GPIOB, supply_pin, GPIO_PIN_SET);
 
 	  wait_us(sample_delay.count());
 

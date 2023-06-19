@@ -12,7 +12,7 @@
 
 extern bool adc_ready;
 
-constexpr uint16_t LOW_ADC_VAL = 256;
+constexpr uint16_t LOW_ADC_VAL = 312;
 constexpr uint16_t HIGH_ADC_VAL = 4096 - 512;
 
 

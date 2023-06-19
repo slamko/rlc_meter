@@ -49,7 +49,6 @@ struct Capa : public Unit<long double>{
 		return *this;
 	}
 
-
 	long double get_uf() {
 		return val / (1000 * 1000);
 	}
@@ -61,6 +60,9 @@ struct Capa : public Unit<long double>{
 	long double get_pf() {
 		return val;
 	}
+
+	long double get_auto();
+	const char *get_auto_unit();
 
 	static Capa f(long double);
 	static Capa uf(long double);

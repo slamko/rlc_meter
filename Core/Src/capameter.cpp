@@ -12,7 +12,7 @@ extern "C" {
 
 using namespace std::chrono;
 
-constexpr microseconds DEFAULT_SAMPLE_TIME = 10000us;
+constexpr microseconds DEFAULT_SAMPLE_TIME = 1000us;
 
 Capa capa_calc(microseconds charge_time, Res res, uint16_t vc0, uint16_t vc) {
 	double ln = log((double)(E - vc0) / (double)(E - vc));
@@ -31,20 +31,21 @@ extern "C" void capameter(void) {
 			  sample_time *= 10;
 		  }
 
+		  for (; val > HIGH_ADC_VAL; measure(&hadc2, GPIO_PIN_4, sample_time, &init_val, &val)) {
+			  sample_time /= 10;
+		  }
 
 		  for (int i = 0; i < 5; i++) {
 			  measure(&hadc2, GPIO_PIN_4, sample_time, &init_val, &val);
-			  capa = capa + capa_calc(sample_time, 10_kOhm, init_val, val);
+			  capa = capa + capa_calc(sample_time, 100_kOhm, init_val, val);
 		  }
 
 		  capa = capa / 5;
 
-		 // Capa mean_capa =
-
 		  lcd_clear();
 		  lcd_print("Capa=");
-		  print_unit(capa.get_uf());
-		  lcd_print("uF");
+		  print_unit(capa.get_auto());
+		  lcd_print(capa.get_auto_unit());
 		  adc_ready = false;
 	  }
 }

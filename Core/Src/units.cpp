@@ -38,6 +38,28 @@ Res operator ""_kOhm(unsigned long long val) {
 	return Res::kohm(val * 1000);
 }
 
+long double Capa::get_auto() {
+	if (val > 1000000.0) {
+		return get_uf();
+	} else if (val > 1000.0) {
+		return get_nf();
+	} else if (val > 1.0) {
+		return get_pf();
+	}
+	return val;
+}
+
+const char *Capa::get_auto_unit() {
+	if (val > 1000000.0) {
+		return "uF";
+	} else if (val > 1000.0) {
+		return "nF";
+	} else if (val > 1.0) {
+		return "pF";
+	}
+	return "fF";
+}
+
 Capa operator ""_uF(long double val) {
 	return Capa::uf(val);
 }
