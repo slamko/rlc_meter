@@ -54,7 +54,12 @@ void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
 extern ADC_HandleTypeDef hadc2;
+
+extern DAC_HandleTypeDef hdac1;
+extern DMA_HandleTypeDef hdma_dac1_ch1;
+
 extern TIM_HandleTypeDef htim2;
+extern TIM_HandleTypeDef htim3;
 
 /* USER CODE END EFP */
 
