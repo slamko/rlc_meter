@@ -64,16 +64,29 @@ extern "C" void start_button_control(void) {
 int adc_select_ch(ADC_HandleTypeDef *adc, uint32_t channel) {
 	ADC_ChannelConfTypeDef ch_conf = {0};
 
-	ch_conf.Channel = ADC_CHANNEL_4;
+	ch_conf.Channel = channel;
 	ch_conf.Rank = ADC_REGULAR_RANK_1;
 	ch_conf.SingleDiff = ADC_SINGLE_ENDED;
 	ch_conf.SamplingTime = ADC_SAMPLETIME_1CYCLE_5;
 	ch_conf.OffsetNumber = ADC_OFFSET_NONE;
 	ch_conf.Offset = 0;
-	if (HAL_ADC_ConfigChannel(&hadc2, &ch_conf) != HAL_OK)
+	if (HAL_ADC_ConfigChannel(adc, &ch_conf) != HAL_OK)
 	{
 	  return 1;
 	}
+/*
+	ADC_ChannelConfTypeDef ch_conf = {0};
+
+		ch_conf.Channel = channel;
+		ch_conf.Rank = ADC_REGULAR_RANK_1;
+		ch_conf.SingleDiff = ADC_SINGLE_ENDED;
+		ch_conf.SamplingTime = ADC_SAMPLETIME_1CYCLE_5;
+		ch_conf.OffsetNumber = ADC_OFFSET_NONE;
+		ch_conf.Offset = 0;
+		if (HAL_ADC_ConfigChannel(adc, &ch_conf) != HAL_OK)
+		{
+		  return 1;
+		}*/
 	return 0;
 }
 

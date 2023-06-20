@@ -38,10 +38,10 @@ extern "C" void capameter(void) {
 		  Capa capa {};
 
 		  if (pico_measure_trig) {
-			  //adc_select_ch(&hadc1, ADC_CHANNEL_11);
+			  adc_select_ch(&hadc1, ADC_CHANNEL_12);
 			  resistor = 100_kOhm;
 		  } else if (micro_measure_trig){
-			  //adc_select_ch(&hadc1, ADC_CHANNEL_12);
+			  adc_select_ch(&hadc1, ADC_CHANNEL_11);
 			  resistor = 100_Ohm;
 		  } else {
 			  return;
