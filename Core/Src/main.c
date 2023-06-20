@@ -27,6 +27,8 @@
 #include "lcd.h"
 #include "outils.h"
 
+void start_button_control(void);
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -49,49 +51,10 @@ ADC_HandleTypeDef hadc1;
 ADC_HandleTypeDef hadc2;
 DMA_HandleTypeDef hdma_adc1;
 
-DAC_HandleTypeDef hdac1;
-DMA_HandleTypeDef hdma_dac1_ch1;
-
 TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim3;
 
 /* USER CODE BEGIN PV */
-
-uint16_t adc_read[128] = {0};
-
-const uint16_t sineLookupTable[] = {
-2048, 2148, 2249, 2349,
-2448, 2546, 2643, 2738,
-2832, 2924, 3013, 3101,
-3186, 3268, 3347, 3423,
-3496, 3565, 3631, 3693,
-3751, 3805, 3854, 3899,
-3940, 3976, 4008, 4035,
-4057, 4074, 4086, 4094,
-4096, 4094, 4086, 4074,
-4057, 4035, 4008, 3976,
-3940, 3899, 3854, 3805,
-3751, 3693, 3631, 3565,
-3496, 3423, 3347, 3268,
-3186, 3101, 3013, 2924,
-2832, 2738, 2643, 2546,
-2448, 2349, 2249, 2148,
-2048, 1948, 1847, 1747,
-1648, 1550, 1453, 1358,
-1264, 1172, 1083, 995,
-910, 828, 749, 673,
-600, 531, 465, 403,
-345, 291, 242, 197,
-156, 120, 88, 61,
-39, 22, 10, 2,
-0, 2, 10, 22,
-39, 61, 88, 120,
-156, 197, 242, 291,
-345, 403, 465, 531,
-600, 673, 749, 828,
-910, 995, 1083, 1172,
-1264, 1358, 1453, 1550,
-1648, 1747, 1847, 1948};
 
 /* USER CODE END PV */
 
@@ -101,7 +64,6 @@ static void MX_GPIO_Init(void);
 static void MX_DMA_Init(void);
 static void MX_ADC2_Init(void);
 static void MX_TIM2_Init(void);
-static void MX_DAC1_Init(void);
 static void MX_TIM3_Init(void);
 static void MX_ADC1_Init(void);
 /* USER CODE BEGIN PFP */
@@ -110,12 +72,6 @@ static void MX_ADC1_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
-void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *adc) {
-	if (adc->ErrorCode) {
-
-	}
-}
 
 /* USER CODE END 0 */
 
@@ -150,7 +106,6 @@ int main(void)
   MX_DMA_Init();
   MX_ADC2_Init();
   MX_TIM2_Init();
-  MX_DAC1_Init();
   MX_TIM3_Init();
   MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
@@ -158,7 +113,6 @@ int main(void)
   HAL_TIM_Base_Start(&htim2);
   HAL_ADCEx_Calibration_Start(&hadc2, ADC_SINGLE_ENDED);
   HAL_ADCEx_Calibration_Start(&hadc1, ADC_SINGLE_ENDED);
-  HAL_DAC_Start_DMA(&hdac1, DAC_CHANNEL_1, sineLookupTable, 128, DAC_ALIGN_12B_R);
   HAL_TIM_Base_Start(&htim3);
   lcd_init();
 
@@ -168,24 +122,8 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  HAL_ADC_Start_DMA(&hadc1, adc_read, 128);
-	  //HAL_Delay(10);
-	  /*
-	  HAL_DAC_Stop_DMA(&hdac1, DAC_CHANNEL_1);
-	  HAL_Delay(10);
-	  HAL_DAC_Start_DMA(&hdac1, DAC_CHANNEL_1, sineLookupTable, 128, DAC_ALIGN_12B_R);
-	  HAL_Delay(10);
-*/
-	  /*
-
-	   for (unsigned int i = 0; i < 128; i++) {
-		  HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_1, DAC_ALIGN_12B_R, sineLookupTable[i]);
-		  wait_us(10);
-
-	  }
-
-	  */
-	  //capameter();
+	  start_button_control();
+	  capameter();
 	  //selfmeter();
 
     /* USER CODE END WHILE */
@@ -364,47 +302,6 @@ static void MX_ADC2_Init(void)
 }
 
 /**
-  * @brief DAC1 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_DAC1_Init(void)
-{
-
-  /* USER CODE BEGIN DAC1_Init 0 */
-
-  /* USER CODE END DAC1_Init 0 */
-
-  DAC_ChannelConfTypeDef sConfig = {0};
-
-  /* USER CODE BEGIN DAC1_Init 1 */
-
-  /* USER CODE END DAC1_Init 1 */
-
-  /** DAC Initialization
-  */
-  hdac1.Instance = DAC1;
-  if (HAL_DAC_Init(&hdac1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-
-  /** DAC channel OUT1 config
-  */
-  sConfig.DAC_Trigger = DAC_TRIGGER_T3_TRGO;
-  sConfig.DAC_OutputBuffer = DAC_OUTPUTBUFFER_ENABLE;
-  if (HAL_DAC_ConfigChannel(&hdac1, &sConfig, DAC_CHANNEL_1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  __HAL_REMAPTRIGGER_ENABLE(HAL_REMAPTRIGGER_DAC1_TRIG);
-  /* USER CODE BEGIN DAC1_Init 2 */
-
-  /* USER CODE END DAC1_Init 2 */
-
-}
-
-/**
   * @brief TIM2 Initialization Function
   * @param None
   * @retval None
@@ -520,9 +417,6 @@ static void MX_DMA_Init(void)
   /* DMA1_Channel1_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA1_Channel1_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(DMA1_Channel1_IRQn);
-  /* DMA1_Channel3_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA1_Channel3_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(DMA1_Channel3_IRQn);
 
 }
 
@@ -568,8 +462,14 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : PA10 */
-  GPIO_InitStruct.Pin = GPIO_PIN_10;
+  /*Configure GPIO pin : PA2 */
+  GPIO_InitStruct.Pin = GPIO_PIN_2;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : PA10 PA12 */
+  GPIO_InitStruct.Pin = GPIO_PIN_10|GPIO_PIN_12;
   GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
