@@ -38,25 +38,27 @@ extern "C" void capameter(void) {
 		  Capa capa {};
 
 		  if (pico_measure_trig) {
-			  resistor = 10_kOhm;
+			  //adc_select_ch(&hadc1, ADC_CHANNEL_11);
+			  resistor = 100_kOhm;
 		  } else if (micro_measure_trig){
+			  //adc_select_ch(&hadc1, ADC_CHANNEL_12);
 			  resistor = 100_Ohm;
 		  } else {
 			  return;
 		  }
 
-		  measure(&hadc1, GPIO_PIN_4, sample_time, &init_val, &val);
+		  measure(&hadc1, GPIO_PIN_4, sample_time, &init_val, &val, false);
 
-		  for (; val < LOW_ADC_VAL; measure(&hadc1, GPIO_PIN_4, sample_time, &init_val, &val)) {
+		  for (; val < 312; measure(&hadc1, GPIO_PIN_4, sample_time, &init_val, &val, false)) {
 			  sample_time *= 10;
 		  }
 
-		  for (; val > HIGH_ADC_VAL; measure(&hadc1, GPIO_PIN_4, sample_time, &init_val, &val)) {
+		  for (; val > HIGH_ADC_VAL; measure(&hadc1, GPIO_PIN_4, sample_time, &init_val, &val, false)) {
 			  sample_time /= 10;
 		  }
 
 		  for (int i = 0; i < 5; i++) {
-			  measure(&hadc1, GPIO_PIN_4, sample_time, &init_val, &val);
+			  measure(&hadc1, GPIO_PIN_4, sample_time, &init_val, &val, false);
 			  capa.set_val(capa + capa_calc(sample_time, resistor, init_val, val));
 		  }
 

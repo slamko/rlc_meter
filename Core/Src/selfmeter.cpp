@@ -19,7 +19,7 @@ extern "C" {
 
 using namespace std::chrono;
 
-constexpr microseconds DEFAULT_SAMPLE_TIME = 100000us;
+constexpr microseconds DEFAULT_SAMPLE_TIME = 10000us;
 constexpr unsigned int SAMPLE_COUNT = 5;
 const Res INPUT_RESISTANCE = 10_Ohm;
 
@@ -41,18 +41,22 @@ extern "C" void selfmeter(void) {
 		  microseconds sample_time = DEFAULT_SAMPLE_TIME;
 		  Self self{};
 
-		  measure(&hadc2, GPIO_PIN_4, sample_time, &init_val, &val);
+		  if (!milli_measure_trig) {
+			  return;
+		  }
 
-		  for (; val < 256; measure(&hadc2, GPIO_PIN_4, sample_time, &init_val, &val)) {
+		  measure(&hadc1, GPIO_PIN_4, sample_time, &init_val, &val, true);
+
+		  for (; val < 256; measure(&hadc1, GPIO_PIN_4, sample_time, &init_val, &val, true)) {
 			  sample_time /= 10;
 		  }
 
-		  for (; val > HIGH_ADC_VAL; measure(&hadc2, GPIO_PIN_4, sample_time, &init_val, &val)) {
+		  for (; val > HIGH_ADC_VAL; measure(&hadc1, GPIO_PIN_4, sample_time, &init_val, &val, true)) {
 			  sample_time *= 10;
 		  }
 
 		  for (unsigned int i = 0; i < SAMPLE_COUNT; i++) {
-			  measure(&hadc2, GPIO_PIN_4, sample_time, &init_val, &val);
+			  measure(&hadc1, GPIO_PIN_4, sample_time, &init_val, &val, true);
 			  self.set_val(self +
 					  self_calc(sample_time, INPUT_RESISTANCE, init_val, val));
 		  }

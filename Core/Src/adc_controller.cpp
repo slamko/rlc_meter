@@ -61,19 +61,37 @@ extern "C" void start_button_control(void) {
 	}
 }
 
-void adc_select_ch(ADC_HandleTypeDef *adc, uint32_t channel) {
+int adc_select_ch(ADC_HandleTypeDef *adc, uint32_t channel) {
+	ADC_ChannelConfTypeDef ch_conf = {0};
 
-
+	ch_conf.Channel = ADC_CHANNEL_4;
+	ch_conf.Rank = ADC_REGULAR_RANK_1;
+	ch_conf.SingleDiff = ADC_SINGLE_ENDED;
+	ch_conf.SamplingTime = ADC_SAMPLETIME_1CYCLE_5;
+	ch_conf.OffsetNumber = ADC_OFFSET_NONE;
+	ch_conf.Offset = 0;
+	if (HAL_ADC_ConfigChannel(&hadc2, &ch_conf) != HAL_OK)
+	{
+	  return 1;
+	}
+	return 0;
 }
 
 int measure(ADC_HandleTypeDef *adc, uint16_t supply_pin,
 		std::chrono::microseconds sample_delay,
-		uint16_t *v0, uint16_t *v) {
+		uint16_t *v0, uint16_t *v, bool set_first)
+{
+	  if (set_first) {
+		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
+	  }
 
-	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
 	  HAL_ADC_Start(adc);
 	  if (HAL_ADC_PollForConversion(adc, 1000) != HAL_OK) return 1;
 	  *v0 = HAL_ADC_GetValue(adc);
+
+	  if (!set_first) {
+		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
+	  }
 
 	  wait_us(sample_delay.count());
 
@@ -82,6 +100,7 @@ int measure(ADC_HandleTypeDef *adc, uint16_t supply_pin,
 
 	  *v = HAL_ADC_GetValue(adc);
 	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
+	  //HAL_ADC_Stop(&hadc1);
 
 	  wait_us(sample_delay.count() * 10);
 

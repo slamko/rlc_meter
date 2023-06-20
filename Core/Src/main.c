@@ -124,7 +124,7 @@ int main(void)
   {
 	  start_button_control();
 	  capameter();
-	  //selfmeter();
+
 
     /* USER CODE END WHILE */
 
