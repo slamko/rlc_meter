@@ -58,7 +58,9 @@ extern DMA_HandleTypeDef hdma_adc1;
 /* USER CODE BEGIN 0 */
 
 /* USER CODE END 0 */
-/**
+
+void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
+                    /**
   * Initializes the Global MSP.
   */
 void HAL_MspInit(void)
@@ -115,8 +117,8 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef* hadc)
     hdma_adc1.Init.Direction = DMA_PERIPH_TO_MEMORY;
     hdma_adc1.Init.PeriphInc = DMA_PINC_DISABLE;
     hdma_adc1.Init.MemInc = DMA_MINC_ENABLE;
-    hdma_adc1.Init.PeriphDataAlignment = DMA_PDATAALIGN_HALFWORD;
-    hdma_adc1.Init.MemDataAlignment = DMA_MDATAALIGN_HALFWORD;
+    hdma_adc1.Init.PeriphDataAlignment = DMA_PDATAALIGN_WORD;
+    hdma_adc1.Init.MemDataAlignment = DMA_MDATAALIGN_WORD;
     hdma_adc1.Init.Mode = DMA_NORMAL;
     hdma_adc1.Init.Priority = DMA_PRIORITY_MEDIUM;
     if (HAL_DMA_Init(&hdma_adc1) != HAL_OK)
@@ -244,6 +246,32 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* htim_base)
 
 }
 
+void HAL_TIM_MspPostInit(TIM_HandleTypeDef* htim)
+{
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
+  if(htim->Instance==TIM3)
+  {
+  /* USER CODE BEGIN TIM3_MspPostInit 0 */
+
+  /* USER CODE END TIM3_MspPostInit 0 */
+
+    __HAL_RCC_GPIOB_CLK_ENABLE();
+    /**TIM3 GPIO Configuration
+    PB7     ------> TIM3_CH4
+    */
+    GPIO_InitStruct.Pin = GPIO_PIN_7;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    GPIO_InitStruct.Alternate = GPIO_AF10_TIM3;
+    HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /* USER CODE BEGIN TIM3_MspPostInit 1 */
+
+  /* USER CODE END TIM3_MspPostInit 1 */
+  }
+
+}
 /**
 * @brief TIM_Base MSP De-Initialization
 * This function freeze the hardware resources used in this example

@@ -4,7 +4,7 @@
  *  Created on: Jun 20, 2023
  *      Author: slamko
  */
-
+/*
 #include "main.h"
 
 uint32_t sine_lookup_table[] = {
@@ -62,4 +62,5 @@ void start_sine() {
 void stop_sine() {
 	//HAL_DAC_Stop_DMA(&hdac1, DAC_CHANNEL_1);
 }
+*/
 

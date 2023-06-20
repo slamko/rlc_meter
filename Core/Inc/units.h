@@ -70,6 +70,10 @@ struct Capa : public Unit<long double>{
 	long double get_auto();
 	const char *get_auto_unit();
 
+	static Capa nil() {
+		return Capa {};
+	}
+
 	static Capa f(long double);
 	static Capa uf(long double);
 	static Capa nf(long double);

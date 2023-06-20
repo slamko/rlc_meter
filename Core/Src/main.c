@@ -56,6 +56,8 @@ TIM_HandleTypeDef htim3;
 
 /* USER CODE BEGIN PV */
 
+uint32_t adc_read[128];
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -72,6 +74,12 @@ static void MX_ADC1_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc) {
+	if (hadc->ErrorCode) {
+
+	}
+}
 
 /* USER CODE END 0 */
 
@@ -113,8 +121,9 @@ int main(void)
   HAL_TIM_Base_Start(&htim2);
   HAL_ADCEx_Calibration_Start(&hadc2, ADC_SINGLE_ENDED);
   HAL_ADCEx_Calibration_Start(&hadc1, ADC_SINGLE_ENDED);
-  HAL_TIM_Base_Start(&htim3);
+  //HAL_TIMEx_PWMN_Start(&htim3, TIM_CHANNEL_4);
   lcd_init();
+  //HAL_ADC_Start_DMA(&hadc2, adc_read, 128);
 
   /* USER CODE END 2 */
 
@@ -122,9 +131,11 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  /*HAL_ADC_Start(&hadc2);
+	  HAL_ADC_PollForConversion(&hadc2, 1000);
+	  int a = HAL_ADC_GetValue(&hadc2);*/
 	  start_button_control();
 	  capameter();
-
 
     /* USER CODE END WHILE */
 
@@ -288,7 +299,7 @@ static void MX_ADC2_Init(void)
   sConfig.Channel = ADC_CHANNEL_4;
   sConfig.Rank = ADC_REGULAR_RANK_1;
   sConfig.SingleDiff = ADC_SINGLE_ENDED;
-  sConfig.SamplingTime = ADC_SAMPLETIME_1CYCLE_5;
+  sConfig.SamplingTime = ADC_SAMPLETIME_61CYCLES_5;
   sConfig.OffsetNumber = ADC_OFFSET_NONE;
   sConfig.Offset = 0;
   if (HAL_ADC_ConfigChannel(&hadc2, &sConfig) != HAL_OK)
@@ -373,6 +384,7 @@ static void MX_TIM3_Init(void)
 
   TIM_ClockConfigTypeDef sClockSourceConfig = {0};
   TIM_MasterConfigTypeDef sMasterConfig = {0};
+  TIM_OC_InitTypeDef sConfigOC = {0};
 
   /* USER CODE BEGIN TIM3_Init 1 */
 
@@ -380,9 +392,9 @@ static void MX_TIM3_Init(void)
   htim3.Instance = TIM3;
   htim3.Init.Prescaler = 64-1;
   htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim3.Init.Period = 16-1;
+  htim3.Init.Period = 65534-1;
   htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-  htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
   if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
   {
     Error_Handler();
@@ -392,15 +404,28 @@ static void MX_TIM3_Init(void)
   {
     Error_Handler();
   }
+  if (HAL_TIM_PWM_Init(&htim3) != HAL_OK)
+  {
+    Error_Handler();
+  }
   sMasterConfig.MasterOutputTrigger = TIM_TRGO_UPDATE;
   sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
   if (HAL_TIMEx_MasterConfigSynchronization(&htim3, &sMasterConfig) != HAL_OK)
   {
     Error_Handler();
   }
+  sConfigOC.OCMode = TIM_OCMODE_PWM1;
+  sConfigOC.Pulse = 0;
+  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+  sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+  if (HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_4) != HAL_OK)
+  {
+    Error_Handler();
+  }
   /* USER CODE BEGIN TIM3_Init 2 */
 
   /* USER CODE END TIM3_Init 2 */
+  HAL_TIM_MspPostInit(&htim3);
 
 }
 
