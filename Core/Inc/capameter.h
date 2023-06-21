@@ -12,6 +12,8 @@ void capa_pico_measure_trig(void);
 
 void capa_nano_measure_trig(void);
 
+void capainit();
+
 void capa_micro_measure_trig(void);
 
 void capameter(void);

@@ -86,7 +86,6 @@ int measure(ADC_HandleTypeDef *adc, uint16_t supply_pin,
 		//  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
 	  }
 
-
 	  HAL_ADC_Start(adc);
 	  if (HAL_ADC_PollForConversion(adc, 1000) != HAL_OK) return 1;
 	  *v0 = HAL_ADC_GetValue(adc);
@@ -104,9 +103,13 @@ int measure(ADC_HandleTypeDef *adc, uint16_t supply_pin,
 	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
 	  //HAL_ADC_Stop(&hadc1);
 
-	  wait_us(sample_delay.count() * 100);
+	  wait_us(sample_delay.count() * 10);
 	 // HAL_Delay(1000);
 
 	  return 0;
+}
+
+extern "C" void adc_init(void) {
+	capainit();
 }
 

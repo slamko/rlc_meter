@@ -28,6 +28,7 @@
 #include "outils.h"
 
 void start_button_control(void);
+void adc_init(void);
 
 /* USER CODE END Includes */
 
@@ -123,6 +124,7 @@ int main(void)
   HAL_ADCEx_Calibration_Start(&hadc1, ADC_SINGLE_ENDED);
   //HAL_TIMEx_PWMN_Start(&htim3, TIM_CHANNEL_4);
   lcd_init();
+  adc_init();
   //HAL_ADC_Start_DMA(&hadc2, adc_read, 128);
 
   /* USER CODE END 2 */
@@ -131,9 +133,6 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  /*HAL_ADC_Start(&hadc2);
-	  HAL_ADC_PollForConversion(&hadc2, 1000);
-	  int a = HAL_ADC_GetValue(&hadc2);*/
 	  start_button_control();
 	  capameter();
 
