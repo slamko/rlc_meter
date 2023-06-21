@@ -12,7 +12,8 @@ extern "C" {
 
 using namespace std::chrono;
 
-static constexpr microseconds PICO_SAMPLE_TIME = 50us;
+static constexpr microseconds PICO_SAMPLE_TIME 	= 50us;
+static constexpr microseconds NANO_SAMPLE_TIME 	= 10000us;
 static constexpr microseconds MICRO_SAMPLE_TIME = 10000us;
 
 static const Res PICO_RESISTOR = 1000_kOhm;
@@ -94,7 +95,7 @@ extern "C" void capameter(void) {
 		  } else if (nano_measure_trig) {
 			  adc_select_ch(&hadc1, ADC_NANO_CHANNEL);
 			  resistor = NANO_RESISTOR;
-			  sample_time = MICRO_SAMPLE_TIME;
+			  sample_time = NANO_SAMPLE_TIME;
 		  } else if (micro_measure_trig){
 			  adc_select_ch(&hadc1, ADC_MICRO_CHANNEL);
 			  resistor = MICRO_RESISTOR;
@@ -111,6 +112,7 @@ extern "C" void capameter(void) {
 
 			  if (sample_time >= 10s) {
 				  result(Capa::nil());
+				  return;
 			  }
 		  }
 
@@ -119,6 +121,7 @@ extern "C" void capameter(void) {
 
 			  if (sample_time.count() == 0) {
 				  result(Capa::nil());
+				  return;
 			  }
 		  }
 
