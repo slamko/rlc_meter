@@ -15,7 +15,7 @@
 #define d6_set(state) HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, (state));
 #define d7_set(state) HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, (state));
 
-#define rs_set(state) HAL_GPIO_WritePin(GPIOA, GPIO_PIN_3, (state));
+#define rs_set(state) HAL_GPIO_WritePin(GPIOF, GPIO_PIN_0, (state));
 #define rw_set(state) HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, (state));
 #define en_set(state) HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, (state));
 
