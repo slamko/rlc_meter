@@ -110,6 +110,10 @@ struct Self : public Unit<long double>{
 		return val * 1000;
 	}
 
+	static Self nil() {
+		return Self {};
+	}
+
 	static Self h(long double);
 	static Self mh(long double);
 	static Self uh(long double);

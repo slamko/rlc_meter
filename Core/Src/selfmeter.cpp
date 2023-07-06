@@ -44,6 +44,51 @@ void result (Self self) {
 	adc_ready = false;
 }
 
+static inline void self_measure(microseconds sample_time, uint16_t *v0, uint16_t *v) {
+	measure(&hadc2, GPIO_PIN_7, sample_time, v0, v, true);
+}
+
+void calibrate_mult(microseconds &sample_time, unsigned int mult, uint16_t *val) {
+	uint16_t init_val;
+	for (; *val < 256; self_measure(sample_time, &init_val, val)) {
+		 sample_time /= mult;
+
+		 if (sample_time.count() <= 1) {
+			 result(Self::nil());
+		 }
+	 }
+
+	 for (; *val > HIGH_ADC_VAL; self_measure(sample_time, &init_val, val)) {
+		 sample_time *= 10;
+
+		 if (sample_time >= 10s) {
+			 result(Self::nil());
+			 return;
+		 }
+	 }
+}
+
+void calibrate_add(microseconds &sample_time, unsigned int mult, uint16_t *val) {
+	uint16_t init_val;
+	for (; *val < 256; self_measure(sample_time, &init_val, val)) {
+		 sample_time -= sample_time / mult;
+
+		 if (sample_time.count() <= 1) {
+			 result(Self::nil());
+			 return;
+		 }
+	 }
+
+	 for (; *val > HIGH_ADC_VAL; self_measure(sample_time, &init_val, val)) {
+		 sample_time += sample_time / 10;
+
+		 if (sample_time >= 10s) {
+			 result(Self::nil());
+			 return;
+		 }
+	 }
+}
+
 extern "C" void selfmeter(void) {
 	  if (adc_ready) {
 		  uint16_t init_val, val;
@@ -54,47 +99,21 @@ extern "C" void selfmeter(void) {
 			  return;
 		  }
 
-		  measure(&hadc2, GPIO_PIN_4, sample_time, &init_val, &val, true);
+		  self_measure(sample_time, &init_val, &val);
 
-		  for (; val < 256; measure(&hadc2, GPIO_PIN_4, sample_time, &init_val, &val, true)) {
-			  sample_time /= 10;
-		  }
-
-		  for (; val > HIGH_ADC_VAL; measure(&hadc2, GPIO_PIN_4, sample_time, &init_val, &val, true)) {
-			  sample_time *= 10;
-
-			  if (sample_time >= 10s) {
-				  //result(Self:)
-				  return;
-			  }
+		  if (val > init_val) {
+			  result(Self::nil());
+			  return;
 		  }
 
-		  for (; val < 256; measure(&hadc2, GPIO_PIN_4, sample_time, &init_val, &val, true)) {
-			  sample_time /= 5;
-		  }
+		  calibrate_mult(sample_time, 10, &val);
 
-		  for (; val > HIGH_ADC_VAL; measure(&hadc2, GPIO_PIN_4, sample_time, &init_val, &val, true)) {
-			  sample_time *= 5;
-		  }
-/*
-		  for (; val < 256; measure(&hadc2, GPIO_PIN_4, sample_time, &init_val, &val, true)) {
-			  sample_time /= 2;
-		  }
+		  calibrate_mult(sample_time, 5, &val);
 
-		  for (; val > HIGH_ADC_VAL; measure(&hadc2, GPIO_PIN_4, sample_time, &init_val, &val, true)) {
-			  sample_time *= 2;
-		  }
-*/
-		  for (; val < 256; measure(&hadc2, GPIO_PIN_4, sample_time, &init_val, &val, true)) {
-			  sample_time -= sample_time / 10;
-		  }
-
-		  for (; val > HIGH_ADC_VAL; measure(&hadc2, GPIO_PIN_4, sample_time, &init_val, &val, true)) {
-			  sample_time += sample_time / 10;
-		  }
+		  calibrate_add(sample_time, 10, &val);
 
 		  for (unsigned int i = 0; i < SAMPLE_COUNT; i++) {
-			  measure(&hadc2, GPIO_PIN_4, sample_time, &init_val, &val, true);
+			  self_measure(sample_time, &init_val, &val);
 			  self.set_val(self +
 					  self_calc(sample_time, INPUT_RESISTANCE, init_val, val));
 		  }

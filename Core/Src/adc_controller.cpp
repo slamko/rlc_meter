@@ -51,21 +51,25 @@ extern "C" void start_button_control(void) {
 	if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_2) == GPIO_PIN_RESET) {
 		adc_ready = true;
 		capa_pico_measure_trig();
+		return;
 	}
 
 	if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6) == GPIO_PIN_RESET) {
 		adc_ready = true;
 		self_milli_measure_trig();
+		return;
 	}
 
 	if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_10) == GPIO_PIN_RESET) {
 		adc_ready = true;
 		capa_micro_measure_trig();
+		return;
 	}
 
 	if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_12) == GPIO_PIN_RESET) {
 		adc_ready = true;
 		self_milli_measure_trig();
+		return;
 	}
 }
 
@@ -91,7 +95,7 @@ int measure(ADC_HandleTypeDef *adc, uint16_t supply_pin,
 		uint16_t *v0, uint16_t *v, bool set_first)
 {
 	  if (set_first) {
-		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
+		  HAL_GPIO_WritePin(GPIOB, supply_pin, GPIO_PIN_SET);
 	  }
 
 	  HAL_ADC_Start(adc);
@@ -99,7 +103,7 @@ int measure(ADC_HandleTypeDef *adc, uint16_t supply_pin,
 	  *v0 = HAL_ADC_GetValue(adc);
 
 	  if (!set_first) {
-		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
+		  HAL_GPIO_WritePin(GPIOB, supply_pin, GPIO_PIN_SET);
 	  }
 
 	  wait_us(sample_delay.count());
@@ -108,7 +112,7 @@ int measure(ADC_HandleTypeDef *adc, uint16_t supply_pin,
 	  if (HAL_ADC_PollForConversion(adc, 1000) != HAL_OK) return 1;
 
 	  *v = HAL_ADC_GetValue(adc);
-	  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
+	  HAL_GPIO_WritePin(GPIOB, supply_pin, GPIO_PIN_RESET);
 	  //HAL_ADC_Stop(&hadc1);
 
 	  wait_us(sample_delay.count() * 10);
