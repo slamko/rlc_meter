@@ -35,6 +35,15 @@ Self self_calc(microseconds charge_time, Res res, uint16_t vc0, uint16_t vc) {
 	return val;
 }
 
+void result (Self self) {
+	lcd_clear();
+	lcd_print("Self=");
+	print_unit(self.get_auto());
+	lcd_print(self.get_auto_unit());
+	milli_measure_trig = false;
+	adc_ready = false;
+}
+
 extern "C" void selfmeter(void) {
 	  if (adc_ready) {
 		  uint16_t init_val, val;
@@ -45,28 +54,53 @@ extern "C" void selfmeter(void) {
 			  return;
 		  }
 
-		  measure(&hadc1, GPIO_PIN_4, sample_time, &init_val, &val, true);
+		  measure(&hadc2, GPIO_PIN_4, sample_time, &init_val, &val, true);
 
-		  for (; val < 256; measure(&hadc1, GPIO_PIN_4, sample_time, &init_val, &val, true)) {
+		  for (; val < 256; measure(&hadc2, GPIO_PIN_4, sample_time, &init_val, &val, true)) {
 			  sample_time /= 10;
 		  }
 
-		  for (; val > HIGH_ADC_VAL; measure(&hadc1, GPIO_PIN_4, sample_time, &init_val, &val, true)) {
+		  for (; val > HIGH_ADC_VAL; measure(&hadc2, GPIO_PIN_4, sample_time, &init_val, &val, true)) {
 			  sample_time *= 10;
+
+			  if (sample_time >= 10s) {
+				  //result(Self:)
+				  return;
+			  }
+		  }
+
+		  for (; val < 256; measure(&hadc2, GPIO_PIN_4, sample_time, &init_val, &val, true)) {
+			  sample_time /= 5;
+		  }
+
+		  for (; val > HIGH_ADC_VAL; measure(&hadc2, GPIO_PIN_4, sample_time, &init_val, &val, true)) {
+			  sample_time *= 5;
+		  }
+/*
+		  for (; val < 256; measure(&hadc2, GPIO_PIN_4, sample_time, &init_val, &val, true)) {
+			  sample_time /= 2;
+		  }
+
+		  for (; val > HIGH_ADC_VAL; measure(&hadc2, GPIO_PIN_4, sample_time, &init_val, &val, true)) {
+			  sample_time *= 2;
+		  }
+*/
+		  for (; val < 256; measure(&hadc2, GPIO_PIN_4, sample_time, &init_val, &val, true)) {
+			  sample_time -= sample_time / 10;
+		  }
+
+		  for (; val > HIGH_ADC_VAL; measure(&hadc2, GPIO_PIN_4, sample_time, &init_val, &val, true)) {
+			  sample_time += sample_time / 10;
 		  }
 
 		  for (unsigned int i = 0; i < SAMPLE_COUNT; i++) {
-			  measure(&hadc1, GPIO_PIN_4, sample_time, &init_val, &val, true);
+			  measure(&hadc2, GPIO_PIN_4, sample_time, &init_val, &val, true);
 			  self.set_val(self +
 					  self_calc(sample_time, INPUT_RESISTANCE, init_val, val));
 		  }
 
 		  self.set_val(self / SAMPLE_COUNT);
 
-		  lcd_clear();
-		  lcd_print("Self=");
-		  print_unit(self.get_auto());
-		  lcd_print(self.get_auto_unit());
-		  adc_ready = false;
+		  result(self);
 	  }
 }

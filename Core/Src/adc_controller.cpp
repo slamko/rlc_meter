@@ -37,6 +37,9 @@ extern "C" void HAL_GPIO_EXTI_Callback(uint16_t pin) {
 	case GPIO_PIN_2:
 		capa_pico_measure_trig();
 		break;
+	case GPIO_PIN_6:
+		self_milli_measure_trig();
+		break;
 	case GPIO_PIN_12:
 		capa_micro_measure_trig();
 		break;
@@ -48,6 +51,11 @@ extern "C" void start_button_control(void) {
 	if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_2) == GPIO_PIN_RESET) {
 		adc_ready = true;
 		capa_pico_measure_trig();
+	}
+
+	if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6) == GPIO_PIN_RESET) {
+		adc_ready = true;
+		self_milli_measure_trig();
 	}
 
 	if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_10) == GPIO_PIN_RESET) {
@@ -83,7 +91,7 @@ int measure(ADC_HandleTypeDef *adc, uint16_t supply_pin,
 		uint16_t *v0, uint16_t *v, bool set_first)
 {
 	  if (set_first) {
-		//  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
+		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
 	  }
 
 	  HAL_ADC_Start(adc);
