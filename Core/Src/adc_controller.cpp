@@ -26,62 +26,29 @@ uint32_t adc2_channels[] = {
 };
 
 bool adc_ready = false;
+uint8_t key_mask;
 
-extern "C" void HAL_GPIO_EXTI_Callback(uint16_t pin) {
-	adc_ready = true;
+typedef void(*meter_f)(uint8_t);
 
-	switch (pin) {
-	case GPIO_PIN_10:
-		capa_nano_measure_trig();
-		break;
-	case GPIO_PIN_2:
-		capa_pico_measure_trig();
-		break;
-	case GPIO_PIN_6:
-		self_milli_measure_trig();
-		break;
-	case GPIO_PIN_12:
-		capa_micro_measure_trig();
-		break;
-
-	}
-}
+meter_f meter_table[] = {
+		&pico_capameter,
+		&nano_capameter,
+		&micro_capameter,
+		&selfmeter,
+		&hfemeter,
+};
 
 extern "C" void start_button_control(void) {
-	if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_2) == GPIO_PIN_RESET) {
-		adc_ready = true;
-		capa_pico_measure_trig();
-		return;
-	}
+	uint8_t cur_key_mask = 0;
+	cur_key_mask |= (!HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_12) << 0);
+	cur_key_mask |= (!HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_10) << 1);
+	cur_key_mask |= (!HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_2)  << 2);
 
-	if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6) == GPIO_PIN_RESET) {
-		adc_ready = true;
-		self_milli_measure_trig();
-		return;
-	}
+	key_mask |= cur_key_mask;
 
-	if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_3) == GPIO_PIN_RESET) {
-		adc_ready = true;
-		hfe_npn_measure_trig();
-		return;
-	}
-
-	if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_9) == GPIO_PIN_RESET) {
-		adc_ready = true;
-		hfe_npn_measure_trig();
-		return;
-	}
-
-	if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_10) == GPIO_PIN_RESET) {
-		adc_ready = true;
-		capa_micro_measure_trig();
-		return;
-	}
-
-	if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_12) == GPIO_PIN_RESET) {
-		adc_ready = true;
-		self_milli_measure_trig();
-		return;
+	if (!cur_key_mask && key_mask) {
+		meter_table[key_mask - 1](key_mask);
+		key_mask = 0;
 	}
 }
 

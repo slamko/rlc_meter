@@ -89,13 +89,13 @@ void calibrate_add(microseconds &sample_time, unsigned int mult, uint16_t *val) 
 	 }
 }
 
-extern "C" void selfmeter(void) {
-	  if (adc_ready) {
+void selfmeter(uint8_t key) {
+	  if (true) {
 		  uint16_t init_val, val;
 		  microseconds sample_time = DEFAULT_SAMPLE_TIME;
 		  Self self{};
 
-		  if (!milli_measure_trig) {
+		  if (key != 4) {
 			  return;
 		  }
 

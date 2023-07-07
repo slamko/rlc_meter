@@ -26,8 +26,8 @@ void hfe_npn_measure_trig(void) {
 	npn_measure_trig = true;
 }
 
-extern "C" void hfemeter(void) {
-	if (!npn_measure_trig) {
+void hfemeter(uint8_t key) {
+	if (key != 5) {
 		return;
 	}
 

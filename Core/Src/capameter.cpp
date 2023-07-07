@@ -26,23 +26,7 @@ static const uint32_t ADC_MICRO_CHANNEL = ADC_CHANNEL_11;
 static const uint32_t KOJINE_FACTOR_LIMIT = 6;
 static const uint32_t CAPA_SAMPLE_COUNT = 5;
 
-bool pico_measure_trig = false;
-bool nano_measure_trig = false;
-bool micro_measure_trig = false;
-
 long double pico_calibration;
-
-void capa_pico_measure_trig(void) {
-	pico_measure_trig = true;
-}
-
-void capa_nano_measure_trig(void) {
-	nano_measure_trig = true;
-}
-
-void capa_micro_measure_trig(void) {
-	micro_measure_trig = true;
-}
 
 Capa capa_calc(microseconds charge_time, Res res, uint16_t vc0, uint16_t vc) {
 	double ln = log((double)(E - vc0) / (double)(E - vc));
@@ -58,9 +42,6 @@ void result(Capa capa) {
 	lcd_print(capa.get_auto_unit());
 
 	adc_ready = false;
-	nano_measure_trig = false;
-	pico_measure_trig = false;
-	micro_measure_trig = false;
 }
 
 static inline void capa_measure(microseconds sample_time, uint16_t *v0, uint16_t *v) {
@@ -80,29 +61,10 @@ Capa sample_measure(microseconds sample_time, Res resistor) {
 	return capa;
 }
 
-extern "C" void capameter(void) {
-	  if (adc_ready) {
+void capameter(uint8_t key, microseconds sample_time, Res resistor) {
+	  if (true) {
+		  Capa capa {};
 		  uint16_t init_val, val;
-		  microseconds sample_time;
-		  Res resistor {};
-		  //Capa capa[5] ;
-		  Capa capa{};
-
-		  if (pico_measure_trig) {
-			  adc_select_ch(&hadc1, ADC_PICO_CHANNEL);
-			  resistor = PICO_RESISTOR;
-			  sample_time = PICO_SAMPLE_TIME;
-		  } else if (nano_measure_trig) {
-			  adc_select_ch(&hadc1, ADC_NANO_CHANNEL);
-			  resistor = NANO_RESISTOR;
-			  sample_time = NANO_SAMPLE_TIME;
-		  } else if (micro_measure_trig){
-			  adc_select_ch(&hadc1, ADC_MICRO_CHANNEL);
-			  resistor = MICRO_RESISTOR;
-			  sample_time = MICRO_SAMPLE_TIME;
-		  } else {
-			  return;
-		  }
 
 		  capa_measure(sample_time, &init_val, &val);
 
@@ -127,7 +89,7 @@ extern "C" void capameter(void) {
 
 		  capa = sample_measure(sample_time, resistor);
 
-		  if (pico_measure_trig) {
+		  if (key == 3) {
 			  capa.set_val(Capa::pf(capa.get_pf() - pico_calibration));
 		  }
 
@@ -147,4 +109,28 @@ void pico_channel_calibration() {
 
 void capainit() {
 	pico_channel_calibration();
+}
+
+void pico_capameter(uint8_t key) {
+	adc_select_ch(&hadc1, ADC_PICO_CHANNEL);
+	Res resistor = PICO_RESISTOR;
+	microseconds sample_time = PICO_SAMPLE_TIME;
+
+	capameter(key, sample_time, resistor);
+}
+
+void nano_capameter(uint8_t key) {
+	adc_select_ch(&hadc1, ADC_NANO_CHANNEL);
+	Res resistor = NANO_RESISTOR;
+	microseconds sample_time = NANO_SAMPLE_TIME;
+
+	capameter(key, sample_time, resistor);
+}
+
+void micro_capameter(uint8_t key) {
+	adc_select_ch(&hadc1, ADC_MICRO_CHANNEL);
+	Res resistor = MICRO_RESISTOR;
+	microseconds sample_time = MICRO_SAMPLE_TIME;
+
+	capameter(key, sample_time, resistor);
 }
