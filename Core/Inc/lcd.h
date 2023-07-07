@@ -17,7 +17,7 @@
 
 #define rs_set(state) HAL_GPIO_WritePin(GPIOF, GPIO_PIN_0, (state));
 #define rw_set(state) HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, (state));
-#define en_set(state) HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, (state));
+#define en_set(state) HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, (state));
 
 void lcd_init(void);
 

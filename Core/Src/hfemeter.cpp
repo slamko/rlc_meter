@@ -20,9 +20,13 @@ extern "C" {
 
 using namespace std::chrono;
 
-static long double hfe_calc(Res rcc, Res rbb, uint16_t vcc) {
-	long double ic = ((3.3 * (long double)vcc) / (long double)4096) / rcc.get_ohm();
-	long double ib = (3.3 - 0.7) / rbb.get_ohm();
+static inline long double dac(uint16_t digital) {
+	return ((3.3 * (long double)digital) / (long double)4096);
+}
+
+static long double hfe_calc(Res rcc, Res rbb, uint16_t vcc, uint16_t vbb) {
+	long double ic = ((long double)3.3 - dac(vcc)) / rcc.get_ohm();
+	long double ib = (3.3 - dac(vbb)) / rbb.get_ohm();
 
 	return ic / ib;
 }
@@ -49,9 +53,11 @@ static void result(long double hfe) {
 
 void hfemeter(uint8_t key) {
 	adc_select_ch(&hadc2, ADC_CHANNEL_1);
-
 	uint16_t vcc = hfe_measure();
-	long double hfe = hfe_calc(Res::ohm(20), Res::kohm(10), vcc);
+
+	adc_select_ch(&hadc2, ADC_CHANNEL_4);
+	uint16_t vbb = hfe_measure();
+	long double hfe = hfe_calc(Res::ohm(20), Res::kohm(10), vcc, vbb);
 
 	result(hfe);
 }

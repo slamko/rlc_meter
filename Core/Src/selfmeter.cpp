@@ -38,7 +38,7 @@ void result (Self self) {
 }
 
 static inline void self_measure(microseconds sample_time, uint16_t *v0, uint16_t *v) {
-	measure(&hadc2, GPIO_PIN_7, sample_time, v0, v, true);
+	measure(&hadc1, GPIO_PIN_7, sample_time, v0, v, true);
 }
 
 void calibrate_mult(microseconds &sample_time, unsigned int mult, uint16_t *val) {
@@ -88,7 +88,7 @@ void selfmeter(uint8_t key) {
 		  microseconds sample_time = DEFAULT_SAMPLE_TIME;
 		  Self self{};
 
-		  adc_select_ch(&hadc2, ADC_CHANNEL_4);
+		  adc_select_ch(&hadc1, ADC_CHANNEL_1);
 		  self_measure(sample_time, &init_val, &val);
 
 		  if (val > init_val) {
