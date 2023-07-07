@@ -89,7 +89,7 @@ void capameter(uint8_t key, microseconds sample_time, Res resistor) {
 
 		  capa = sample_measure(sample_time, resistor);
 
-		  if (key == 3) {
+		  if (key == 1) {
 			  capa.set_val(Capa::pf(capa.get_pf() - pico_calibration));
 		  }
 

@@ -47,7 +47,10 @@ extern "C" void start_button_control(void) {
 	key_mask |= cur_key_mask;
 
 	if (!cur_key_mask && key_mask) {
-		meter_table[key_mask - 1](key_mask);
+		if (key_mask - 1 < (sizeof(meter_table) / sizeof(*meter_table))) {
+			meter_table[key_mask - 1](key_mask);
+		}
+
 		key_mask = 0;
 	}
 }

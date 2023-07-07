@@ -23,12 +23,6 @@ constexpr microseconds DEFAULT_SAMPLE_TIME = 10000us;
 constexpr unsigned int SAMPLE_COUNT = 5;
 const Res INPUT_RESISTANCE = 10_Ohm;
 
-static bool milli_measure_trig = false;
-
-void self_milli_measure_trig(void) {
-	milli_measure_trig = true;
-}
-
 Self self_calc(microseconds charge_time, Res res, uint16_t vc0, uint16_t vc) {
 	double ln = log((double)vc0 / (double)vc);
 	Self val = Self::h(((charge_time.count() * res.get_ohm()) / (ln * 1000 * 1000)));
@@ -40,7 +34,6 @@ void result (Self self) {
 	lcd_print("Self=");
 	print_unit(self.get_auto());
 	lcd_print(self.get_auto_unit());
-	milli_measure_trig = false;
 	adc_ready = false;
 }
 
@@ -94,10 +87,6 @@ void selfmeter(uint8_t key) {
 		  uint16_t init_val, val;
 		  microseconds sample_time = DEFAULT_SAMPLE_TIME;
 		  Self self{};
-
-		  if (key != 4) {
-			  return;
-		  }
 
 		  adc_select_ch(&hadc2, ADC_CHANNEL_4);
 		  self_measure(sample_time, &init_val, &val);

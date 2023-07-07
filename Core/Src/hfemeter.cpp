@@ -20,19 +20,38 @@ extern "C" {
 
 using namespace std::chrono;
 
-static bool npn_measure_trig = false;
+static long double hfe_calc(Res rcc, Res rbb, uint16_t vcc) {
+	long double ic = ((3.3 * (long double)vcc) / (long double)4096) / rcc.get_ohm();
+	long double ib = (3.3 - 0.7) / rbb.get_ohm();
 
-void hfe_npn_measure_trig(void) {
-	npn_measure_trig = true;
+	return ic / ib;
+}
+
+static inline uint16_t hfe_measure() {
+	HAL_ADC_Start(&hadc2);
+
+	if (HAL_ADC_PollForConversion(&hadc2, 1000) != HAL_OK) {
+		return 0;
+	}
+
+	uint16_t val = HAL_ADC_GetValue(&hadc2);
+	HAL_ADC_Stop(&hadc2);
+	return val;
+}
+
+static void result(long double hfe) {
+	lcd_clear();
+	lcd_print("hfe=");
+	print_num(hfe, 0);
+
+	adc_ready = false;
 }
 
 void hfemeter(uint8_t key) {
-	if (key != 5) {
-		return;
-	}
-
 	adc_select_ch(&hadc2, ADC_CHANNEL_1);
 
-	npn_measure_trig = false;
+	uint16_t vcc = hfe_measure();
+	long double hfe = hfe_calc(Res::ohm(20), Res::kohm(10), vcc);
 
+	result(hfe);
 }
