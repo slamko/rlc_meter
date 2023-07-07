@@ -9,6 +9,7 @@
 #include "adc_controller.h"
 #include "selfmeter.h"
 #include "capameter.h"
+#include "hfemeter.h"
 #include <chrono>
 
 extern "C" {
@@ -23,7 +24,6 @@ uint32_t adc1_channels[] = {
 uint32_t adc2_channels[] = {
 		ADC_CHANNEL_4,
 };
-
 
 bool adc_ready = false;
 
@@ -57,6 +57,18 @@ extern "C" void start_button_control(void) {
 	if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6) == GPIO_PIN_RESET) {
 		adc_ready = true;
 		self_milli_measure_trig();
+		return;
+	}
+
+	if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_3) == GPIO_PIN_RESET) {
+		adc_ready = true;
+		hfe_npn_measure_trig();
+		return;
+	}
+
+	if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_9) == GPIO_PIN_RESET) {
+		adc_ready = true;
+		hfe_npn_measure_trig();
 		return;
 	}
 

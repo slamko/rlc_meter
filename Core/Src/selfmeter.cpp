@@ -99,6 +99,7 @@ extern "C" void selfmeter(void) {
 			  return;
 		  }
 
+		  adc_select_ch(&hadc2, ADC_CHANNEL_4);
 		  self_measure(sample_time, &init_val, &val);
 
 		  if (val > init_val) {
