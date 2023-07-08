@@ -52,12 +52,12 @@ static void result(long double hfe) {
 }
 
 void hfemeter(uint8_t key) {
-	adc_select_ch(&hadc2, ADC_CHANNEL_1);
+	adc_select_ch(&hadc2, ADC_CHANNEL_1, 0);
 	uint16_t vcc = hfe_measure();
 
-	adc_select_ch(&hadc2, ADC_CHANNEL_4);
+	adc_select_ch(&hadc2, ADC_CHANNEL_4, 0);
 	uint16_t vbb = hfe_measure();
-	long double hfe = hfe_calc(Res::ohm(20), Res::kohm(10), vcc, vbb);
+	long double hfe = hfe_calc(Res::ohm(10), Res::kohm(100), vcc, vbb);
 
 	result(hfe);
 }

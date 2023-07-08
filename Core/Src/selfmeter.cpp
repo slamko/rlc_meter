@@ -19,6 +19,8 @@ extern "C" {
 
 using namespace std::chrono;
 
+#define SELF_ADC_MIN_VAL 512
+
 constexpr microseconds DEFAULT_SAMPLE_TIME = 10000us;
 constexpr unsigned int SAMPLE_COUNT = 5;
 const Res INPUT_RESISTANCE = 10_Ohm;
@@ -43,11 +45,12 @@ static inline void self_measure(microseconds sample_time, uint16_t *v0, uint16_t
 
 void calibrate_mult(microseconds &sample_time, unsigned int mult, uint16_t *val) {
 	uint16_t init_val;
-	for (; *val < 256; self_measure(sample_time, &init_val, val)) {
+	for (; *val < SELF_ADC_MIN_VAL; self_measure(sample_time, &init_val, val)) {
 		 sample_time /= mult;
 
 		 if (sample_time.count() <= 1) {
 			 result(Self::nil());
+			 return;
 		 }
 	 }
 
@@ -63,7 +66,7 @@ void calibrate_mult(microseconds &sample_time, unsigned int mult, uint16_t *val)
 
 void calibrate_add(microseconds &sample_time, unsigned int mult, uint16_t *val) {
 	uint16_t init_val;
-	for (; *val < 256; self_measure(sample_time, &init_val, val)) {
+	for (; *val < SELF_ADC_MIN_VAL; self_measure(sample_time, &init_val, val)) {
 		 sample_time -= sample_time / mult;
 
 		 if (sample_time.count() <= 1) {
@@ -88,7 +91,7 @@ void selfmeter(uint8_t key) {
 		  microseconds sample_time = DEFAULT_SAMPLE_TIME;
 		  Self self{};
 
-		  adc_select_ch(&hadc1, ADC_CHANNEL_1);
+		  adc_select_ch(&hadc1, ADC_CHANNEL_1, ADC_SAMPLETIME_181CYCLES_5);
 		  self_measure(sample_time, &init_val, &val);
 
 		  if (val > init_val) {

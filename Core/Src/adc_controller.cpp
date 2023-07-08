@@ -47,7 +47,7 @@ extern "C" void start_button_control(void) {
 	key_mask |= cur_key_mask;
 
 	if (!cur_key_mask && key_mask) {
-		if (key_mask - 1 < (sizeof(meter_table) / sizeof(*meter_table))) {
+		if ((uint8_t)(key_mask - 1) < (size_t)(sizeof(meter_table) / sizeof(*meter_table))) {
 			meter_table[key_mask - 1](key_mask);
 		}
 
@@ -55,13 +55,13 @@ extern "C" void start_button_control(void) {
 	}
 }
 
-int adc_select_ch(ADC_HandleTypeDef *adc, uint32_t channel) {
+int adc_select_ch(ADC_HandleTypeDef *adc, uint32_t channel, uint32_t sample_rate) {
 	ADC_ChannelConfTypeDef ch_conf = {0};
 
 	ch_conf.Channel = channel;
 	ch_conf.Rank = ADC_REGULAR_RANK_1;
 	ch_conf.SingleDiff = ADC_SINGLE_ENDED;
-	ch_conf.SamplingTime = ADC_SAMPLETIME_61CYCLES_5;
+	ch_conf.SamplingTime = sample_rate ? sample_rate : ADC_SAMPLETIME_1CYCLE_5;
 	ch_conf.OffsetNumber = ADC_OFFSET_NONE;
 	ch_conf.Offset = 0;
 	if (HAL_ADC_ConfigChannel(adc, &ch_conf) != HAL_OK)

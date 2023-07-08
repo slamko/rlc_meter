@@ -98,7 +98,7 @@ void capameter(uint8_t key, microseconds sample_time, Res resistor) {
 }
 
 void pico_channel_calibration() {
-	adc_select_ch(&hadc1, ADC_PICO_CHANNEL);
+	adc_select_ch(&hadc1, ADC_PICO_CHANNEL, 0);
 	Res resistor = PICO_RESISTOR;
 	microseconds sample_time = PICO_SAMPLE_TIME;
 
@@ -112,7 +112,7 @@ void capainit() {
 }
 
 void pico_capameter(uint8_t key) {
-	adc_select_ch(&hadc1, ADC_PICO_CHANNEL);
+	adc_select_ch(&hadc1, ADC_PICO_CHANNEL, 0);
 	Res resistor = PICO_RESISTOR;
 	microseconds sample_time = PICO_SAMPLE_TIME;
 
@@ -120,7 +120,7 @@ void pico_capameter(uint8_t key) {
 }
 
 void nano_capameter(uint8_t key) {
-	adc_select_ch(&hadc1, ADC_NANO_CHANNEL);
+	adc_select_ch(&hadc1, ADC_NANO_CHANNEL, 0);
 	Res resistor = NANO_RESISTOR;
 	microseconds sample_time = NANO_SAMPLE_TIME;
 
@@ -128,7 +128,7 @@ void nano_capameter(uint8_t key) {
 }
 
 void micro_capameter(uint8_t key) {
-	adc_select_ch(&hadc1, ADC_MICRO_CHANNEL);
+	adc_select_ch(&hadc1, ADC_MICRO_CHANNEL, 0);
 	Res resistor = MICRO_RESISTOR;
 	microseconds sample_time = MICRO_SAMPLE_TIME;
 

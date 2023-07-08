@@ -15,7 +15,7 @@ extern bool adc_ready;
 constexpr uint16_t LOW_ADC_VAL = 312;
 constexpr uint16_t HIGH_ADC_VAL = 4096 - 512;
 
-int adc_select_ch(ADC_HandleTypeDef *adc, uint32_t channel);
+int adc_select_ch(ADC_HandleTypeDef *adc, uint32_t channel, uint32_t sample_rate);
 
 int measure(ADC_HandleTypeDef *adc, uint16_t supply_pin,
 		std::chrono::microseconds sample_delay,
